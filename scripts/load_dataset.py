@@ -69,7 +69,7 @@ def prep_dataset(conll_path):
 			feats[idx_sent][idx_token][1] = token.head_emb.detach()
 	feats_tensor = torch.stack(feats,dim=0)
 	print(f'[load_dataset] shape of feats_tensor: {feats_tensor.shape}')
-	with open('feats.pkl', mode='wb') as file:
+	with open(f'./datasets/pkl/feats_{conll_path.stem}.pkl', mode='wb') as file:
 		pickle.dump(feats_tensor,file)
 	print(f'[load_dataset] assembling observation objects for labs')
 	labs = [torch.zeros(max_sentlen) for sent in all_obs]
@@ -77,12 +77,12 @@ def prep_dataset(conll_path):
 		for idx_token, token in enumerate(sent):
 			labs[idx_sent][idx_token] = token.depd_abs
 	labs_tensor = torch.stack(labs,dim=0)
-	with open('labs.pkl', mode='wb') as file:
+	with open(f'./datasets/pkl/labs_{conll_path.stem}.pkl', mode='wb') as file:
 		pickle.dump(labs_tensor,file)
 	print(f'[load_dataset] shape of labs_tensor: {labs_tensor.shape}')
 	lengths = [len(sent) for sent in all_obs]
 	lengths_tensor = torch.tensor(lengths,dtype=torch.float)
-	with open('lengths.pkl', mode='wb') as file:
+	with open(f'./datasets/pkl/lengths_{conll_path.stem}.pkl', mode='wb') as file:
 		pickle.dump(lengths_tensor, file)
 
 	class mydataset(Dataset):

@@ -51,10 +51,13 @@ def dev(probe,dataloader,loss_fn):
         print(f'[probe] current dev batch loss {batch_loss.detach().numpy()}')
     return
 
+DEV_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-dev.conllu')
+TRAIN_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-train.conllu')
+
 # dataloader_dev = prep_dataset(CONLL_PATH.joinpath('en_ewt-ud-test.conllu'))
-dataloader_dev = prep_dataset(CONLL_PATH.joinpath('en_gum-ud-dev.conllu'))
+dataloader_dev = prep_dataset(DEV_CONLL_PATH)
 # dataloader_train = prep_dataset(CONLL_PATH.joinpath('en_ewt-ud-train.conllu'))
-dataloader_train = prep_dataset(CONLL_PATH.joinpath('en_gum-ud-train.conllu'))
+dataloader_train = prep_dataset(TRAIN_CONLL_PATH)
 probe = TwoWordDepdProbe()
 loss_fn = loss()
 optimizer = Adam(probe.parameters(),lr=LEARNING_RATE)
