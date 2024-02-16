@@ -38,7 +38,7 @@ def train(probe,dataloader,loss_fn,optimizer):
         optimizer.zero_grad()
         pred_batch = probe(feat_batch) # (batch_size, 最大句长)
         batch_loss = loss_fn(pred_batch,lab_batch,length_batch)
-        print(f'current train batch loss {batch_loss.detach().numpy()}')
+        print(f'[probe] current train batch loss {batch_loss.detach().numpy()}')
         batch_loss.backward()
         optimizer.step()
     return
@@ -48,7 +48,7 @@ def dev(probe,dataloader,loss_fn):
         probe.eval()
         pred_batch = probe(feat_batch)
         batch_loss = loss_fn(pred_batch, lab_batch, length_batch)
-        print(f'current dev batch loss {batch_loss.detach().numpy()}')
+        print(f'[probe] current dev batch loss {batch_loss.detach().numpy()}')
     return
 
 # dataloader_dev = prep_dataset(CONLL_PATH.joinpath('en_ewt-ud-test.conllu'))
@@ -57,17 +57,17 @@ dataloader_dev = prep_dataset(CONLL_PATH.joinpath('en_gum-ud-dev.conllu'))
 dataloader_train = prep_dataset(CONLL_PATH.joinpath('en_gum-ud-train.conllu'))
 probe = TwoWordDepdProbe()
 loss_fn = loss()
-optimizer = Adam(probe.parameters(),lr=0.001)
+optimizer = Adam(probe.parameters(),lr=LEARNING_RATE)
 
 def looper(epochs):
     for e in range(epochs):
-        print(f'doing epoch {e}...')
+        print(f'[probe] epoch {e}...')
         train(probe,dataloader_train,loss_fn,optimizer)
         dev(probe,dataloader_dev,loss_fn)
     torch.save(probe,'probe.pth')
     return
 
-looper(800)
+looper(100)
 
 print('done')
 

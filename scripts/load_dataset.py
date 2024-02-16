@@ -40,8 +40,9 @@ def prep_dataset(conll_path):
 			wdps_tksents.append(wdps_tksent)
 			idxmaps.append(idxmap)
 		else:
-			print(f'{tree_cnt}')
-			print(f'{text}')
+			# print(f'[load_dataset] {tree_cnt}-th wordpiece-tokenized sent not alignable')
+			# print(f'[load_dataset] {text}')
+			pass
 		tree_cnt += 1
 
 	all_pairs = []
@@ -58,28 +59,32 @@ def prep_dataset(conll_path):
 
 	all_obs = [[observation_class(*node) for node in tree] for tree in all_pairs]
 
+	print(f'[load_dataset] total trees instantiated as observation objects: {len(all_obs)}')
+	print(f'[load_dataset] assembling observation objects for feats')
 	max_sentlen = max([len(sent) for sent in all_obs])
-
-	feats = [torch.zeros(max_sentlen,2,768) for sent in all_obs]
-
+	feats = [torch.zeros(max_sentlen,2,NDIM_TOKEN_EMBEDDING) for sent in all_obs]
 	for idx_sent, sent in enumerate(all_obs):
 		for idx_token, token in enumerate(sent):
 			feats[idx_sent][idx_token][0] = token.token_emb.detach()
 			feats[idx_sent][idx_token][1] = token.head_emb.detach()
-
 	feats_tensor = torch.stack(feats,dim=0)
-
+	print(f'[load_dataset] shape of feats_tensor: {feats_tensor.shape}')
+	with open('feats.pkl', mode='wb') as file:
+		pickle.dump(feats_tensor,file)
+	print(f'[load_dataset] assembling observation objects for labs')
 	labs = [torch.zeros(max_sentlen) for sent in all_obs]
-
 	for idx_sent, sent in enumerate(all_obs):
 		for idx_token, token in enumerate(sent):
 			labs[idx_sent][idx_token] = token.depd_abs
-
 	labs_tensor = torch.stack(labs,dim=0)
-
+	with open('labs.pkl', mode='wb') as file:
+		pickle.dump(labs_tensor,file)
+	print(f'[load_dataset] shape of labs_tensor: {labs_tensor.shape}')
 	lengths = [len(sent) for sent in all_obs]
-
 	lengths_tensor = torch.tensor(lengths,dtype=torch.float)
+	with open('lengths.pkl', mode='wb') as file:
+		pickle.dump(lengths_tensor, file)
+
 	class mydataset(Dataset):
 		def __init__(self,feats,labs,lengths):
 			self.feats = feats
@@ -91,6 +96,6 @@ def prep_dataset(conll_path):
 			return self.feats[idx], self.labs[idx], self.lengths[idx]
 
 	ds = mydataset(feats_tensor,labs_tensor, lengths_tensor)
-
-	dl = DataLoader(ds,batch_size=20,shuffle=False)
+	dl = DataLoader(ds,batch_size=BATCH_SIZE,shuffle=False)
+	print(f'[load_dataset] dataloader instantiated: observations: {len(dl.dataset)}, batches: {len(dl)}')
 	return dl
