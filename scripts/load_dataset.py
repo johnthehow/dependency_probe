@@ -12,7 +12,7 @@ from torch.optim import Adam
 model = BertModel.from_pretrained(BERT_LOCAL_PATH)
 tokenizer = BertTokenizer.from_pretrained(BERT_LOCAL_PATH)
 
-def prep_dataset(conll_path):
+def prep_dataset_onsite(conll_path):
 	tgi = trees_gi(conll_path)
 	trees = [tree for tree in tgi]
 	mappable_trees = []
@@ -84,7 +84,6 @@ def prep_dataset(conll_path):
 	lengths_tensor = torch.tensor(lengths,dtype=torch.float)
 	with open(f'./datasets/pkl/lengths_{conll_path.stem}.pkl', mode='wb') as file:
 		pickle.dump(lengths_tensor, file)
-
 	class mydataset(Dataset):
 		def __init__(self,feats,labs,lengths):
 			self.feats = feats
@@ -99,3 +98,28 @@ def prep_dataset(conll_path):
 	dl = DataLoader(ds,batch_size=BATCH_SIZE,shuffle=False)
 	print(f'[load_dataset] dataloader instantiated: observations: {len(dl.dataset)}, batches: {len(dl)}')
 	return dl
+
+def prep_dataset_preload(conll_path):
+	print(f'[load_dataset] loading feats_{conll_path.stem}.pkl')
+	with open(DATASET_PKL_PATH.joinpath(f'feats_{conll_path.stem}.pkl', mode='rb')) as file:
+		feats_tensor = pickle.load(file)
+	print(f'[load_dataset] loading labs_{conll_path.stem}.pkl')
+	with open(DATASET_PKL_PATH.joinpath(f'labs_{conll_path.stem}.pkl', mode='rb')) as file:
+		labs_tensor = pickle.load(file)
+	print(f'[load_dataset] loading lengths_{conll_path.stem}.pkl')	
+	with open(DATASET_PKL_PATH.joinpath(f'lengths_{conll_path.stem}.pkl', mode='rb')) as file:
+		lengths_tensor = pickle.load(file)
+	class mydataset(Dataset):
+		def __init__(self,feats,labs,lengths):
+			self.feats = feats
+			self.labs = labs
+			self.lengths = lengths
+		def __len__(self):
+			return len(self.labs)
+		def __getitem__(self,idx):
+			return self.feats[idx], self.labs[idx], self.lengths[idx]
+
+	dataset = mydataset(feats_tensor, labs_tensor, lengths_tensor)
+	dataloader = DataLoader(dataset,batch_size=BATCH_SIZE,shuffle=False)
+	print(f'[load_dataset] dataloader instantiated: observations: {len(dataloader.dataset)}, batches: {len(dataloader)}')
+	return dataloader

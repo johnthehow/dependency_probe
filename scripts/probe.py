@@ -5,9 +5,10 @@ from collections import namedtuple
 from torch import nn
 import torch
 from torch.utils.data import Dataset, DataLoader
-import pickle
 from torch.optim import Adam
-from load_dataset import prep_dataset
+from load_dataset import prep_dataset_preload
+import datetime
+
 
 # 参考Hewitt2019, probe.py>>>TwoWordPSDProbe
 class TwoWordDepdProbe(nn.Module):
@@ -55,22 +56,24 @@ DEV_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-dev.conllu')
 TRAIN_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-train.conllu')
 
 # dataloader_dev = prep_dataset(CONLL_PATH.joinpath('en_ewt-ud-test.conllu'))
-dataloader_dev = prep_dataset(DEV_CONLL_PATH)
+dataloader_dev = prep_dataset_preload(DEV_CONLL_PATH)
 # dataloader_train = prep_dataset(CONLL_PATH.joinpath('en_ewt-ud-train.conllu'))
-dataloader_train = prep_dataset(TRAIN_CONLL_PATH)
+dataloader_train = prep_dataset_preload(TRAIN_CONLL_PATH)
 probe = TwoWordDepdProbe()
 loss_fn = loss()
 optimizer = Adam(probe.parameters(),lr=LEARNING_RATE)
+timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
 def looper(epochs):
     for e in range(epochs):
         print(f'[probe] epoch {e}...')
         train(probe,dataloader_train,loss_fn,optimizer)
         dev(probe,dataloader_dev,loss_fn)
-    torch.save(probe,'probe.pth')
+    torch.save(probe,PROBE_SAVEPATH.joinpath(f'{timestamp}.pth'))
+    print(f'[probe] probe saved at {PROBE_SAVEPATH}')
     return
 
-looper(100)
+looper(EPOCHS)
 
 print('done')
 
