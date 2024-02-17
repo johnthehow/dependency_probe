@@ -4,9 +4,8 @@ from thehow.tuda.depd_core import trees_gi
 from collections import namedtuple
 from torch import nn
 import torch
-from torch.utils.data import Dataset, DataLoader
 from torch.optim import Adam
-from load_dataset import prep_dataset_preload
+from load_dataset import prep_dataset_preload, prep_dataset_onsite
 import datetime
 
 
@@ -14,7 +13,7 @@ import datetime
 class TwoWordDepdProbe(nn.Module):
     def __init__(self):
         super().__init__()
-        self.proj = nn.Parameter(data = torch.zeros(768, 768))
+        self.proj = nn.Parameter(data = torch.zeros(768, PROBE_RANK))
         nn.init.uniform_(self.proj, -0.05, 0.05)
     def forward(self,batch):
         transformed = torch.matmul(batch, self.proj) # 经过probe投射过的token向量和token的支配词向量 # (batch_size, 最大句长, 2, 32)
@@ -52,13 +51,22 @@ def dev(probe,dataloader,loss_fn):
         print(f'[probe] current dev batch loss {batch_loss.detach().numpy()}')
     return
 
+def test(probe, dataloader, loss_fn):
+    for feat_batch,lab_batch,length_batch in dataloader:
+        probe.eval()
+        pred_batch = probe(feat_batch)
+        batch_loss = loss_fn(pred_batch, lab_batch, length_batch)
+        print(f'[probe] current test batch loss {batch_loss.detach().numpy()}')
+    return
 DEV_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-dev.conllu')
 TRAIN_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-train.conllu')
+TEST_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-test.conllu')
 
 # dataloader_dev = prep_dataset(CONLL_PATH.joinpath('en_ewt-ud-test.conllu'))
 dataloader_dev = prep_dataset_preload(DEV_CONLL_PATH)
 # dataloader_train = prep_dataset(CONLL_PATH.joinpath('en_ewt-ud-train.conllu'))
 dataloader_train = prep_dataset_preload(TRAIN_CONLL_PATH)
+dataloader_test = prep_dataset_preload(TEST_CONLL_PATH)
 probe = TwoWordDepdProbe()
 loss_fn = loss()
 optimizer = Adam(probe.parameters(),lr=LEARNING_RATE)
@@ -69,6 +77,7 @@ def looper(epochs):
         print(f'[probe] epoch {e}...')
         train(probe,dataloader_train,loss_fn,optimizer)
         dev(probe,dataloader_dev,loss_fn)
+        test(probe,dataloader_test,loss_fn)
     torch.save(probe,PROBE_SAVEPATH.joinpath(f'{timestamp}.pth'))
     print(f'[probe] probe saved at {PROBE_SAVEPATH}')
     return

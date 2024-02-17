@@ -3,11 +3,9 @@ from config import *
 from thehow.wordpiece2token.mapper import idx_mapper, matrix_denser, matrix_clssep_stripper
 from thehow.tuda.depd_core import trees_gi
 from collections import namedtuple
-from torch import nn
 import torch
 from torch.utils.data import Dataset, DataLoader
 import pickle
-from torch.optim import Adam
 
 model = BertModel.from_pretrained(BERT_LOCAL_PATH)
 tokenizer = BertTokenizer.from_pretrained(BERT_LOCAL_PATH)
@@ -22,6 +20,7 @@ def prep_dataset_onsite(conll_path):
 	wdps_tksents = []
 	idxmaps = []
 	tree_cnt = 0
+	print(f'[load_dataset] calculating word embeddings and assemblying into observation objects')
 	for tree in trees:
 		text = tree.text_lower
 		user_tksent = [node.token.lower() for node in tree.nodes]
@@ -29,7 +28,8 @@ def prep_dataset_onsite(conll_path):
 		wdps_tksent = tokenizer.convert_ids_to_tokens(bert_tksent['input_ids'][0][1:-1])
 		idxmap = idx_mapper(wdps_tksent, user_tksent)
 		if idxmap != None:
-			bert_output = model(**bert_tksent)
+			with torch.no_grad():
+				bert_output = model(**bert_tksent)
 			last_hidden = bert_output['last_hidden_state'][0] # 句长+2*768
 			stripmat = matrix_clssep_stripper(last_hidden, scale=False)
 			densemat = matrix_denser(stripmat, idxmap, rowwise=True)
@@ -69,7 +69,7 @@ def prep_dataset_onsite(conll_path):
 			feats[idx_sent][idx_token][1] = token.head_emb.detach()
 	feats_tensor = torch.stack(feats,dim=0)
 	print(f'[load_dataset] shape of feats_tensor: {feats_tensor.shape}')
-	with open(f'./datasets/pkl/feats_{conll_path.stem}.pkl', mode='wb') as file:
+	with open(DATASET_PKL_PATH.joinpath(f'feats_{conll_path.stem}.pkl'), mode='wb') as file:
 		pickle.dump(feats_tensor,file)
 	print(f'[load_dataset] assembling observation objects for labs')
 	labs = [torch.zeros(max_sentlen) for sent in all_obs]
@@ -77,12 +77,12 @@ def prep_dataset_onsite(conll_path):
 		for idx_token, token in enumerate(sent):
 			labs[idx_sent][idx_token] = token.depd_abs
 	labs_tensor = torch.stack(labs,dim=0)
-	with open(f'./datasets/pkl/labs_{conll_path.stem}.pkl', mode='wb') as file:
+	with open(DATASET_PKL_PATH.joinpath(f'labs_{conll_path.stem}.pkl'), mode='wb') as file:
 		pickle.dump(labs_tensor,file)
 	print(f'[load_dataset] shape of labs_tensor: {labs_tensor.shape}')
 	lengths = [len(sent) for sent in all_obs]
 	lengths_tensor = torch.tensor(lengths,dtype=torch.float)
-	with open(f'./datasets/pkl/lengths_{conll_path.stem}.pkl', mode='wb') as file:
+	with open(DATASET_PKL_PATH.joinpath(f'lengths_{conll_path.stem}.pkl'), mode='wb') as file:
 		pickle.dump(lengths_tensor, file)
 	class mydataset(Dataset):
 		def __init__(self,feats,labs,lengths):
@@ -101,13 +101,13 @@ def prep_dataset_onsite(conll_path):
 
 def prep_dataset_preload(conll_path):
 	print(f'[load_dataset] loading feats_{conll_path.stem}.pkl')
-	with open(DATASET_PKL_PATH.joinpath(f'feats_{conll_path.stem}.pkl', mode='rb')) as file:
+	with open(DATASET_PKL_PATH.joinpath(f'feats_{conll_path.stem}.pkl'), mode='rb') as file:
 		feats_tensor = pickle.load(file)
 	print(f'[load_dataset] loading labs_{conll_path.stem}.pkl')
-	with open(DATASET_PKL_PATH.joinpath(f'labs_{conll_path.stem}.pkl', mode='rb')) as file:
+	with open(DATASET_PKL_PATH.joinpath(f'labs_{conll_path.stem}.pkl'), mode='rb') as file:
 		labs_tensor = pickle.load(file)
 	print(f'[load_dataset] loading lengths_{conll_path.stem}.pkl')	
-	with open(DATASET_PKL_PATH.joinpath(f'lengths_{conll_path.stem}.pkl', mode='rb')) as file:
+	with open(DATASET_PKL_PATH.joinpath(f'lengths_{conll_path.stem}.pkl'), mode='rb') as file:
 		lengths_tensor = pickle.load(file)
 	class mydataset(Dataset):
 		def __init__(self,feats,labs,lengths):
