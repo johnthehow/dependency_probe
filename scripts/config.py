@@ -1,6 +1,9 @@
 from pathlib import Path
 BERT_LOCAL_PATH = Path(r'D:\transformers\bert\bert_base_uncased\mixed')
+MODEL_NAME = 'bert_base_uncased'
 NDIM_TOKEN_EMBEDDING = 768
+HIDDEN_LAYER = 3 # {1,2,...,12}
+ONSITE_EMBEDDINGS = True
 LEARNING_RATE = 0.001
 PROBE_RANK = 64
 BATCH_SIZE = 100
@@ -10,3 +13,4 @@ CONLL_PATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependenc
 DATASET_PKL_PATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\pkl")
 PROBE_SAVEPATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\models")
 EPOCHS = 20
+REPORTS_PATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\reports")
