@@ -13,8 +13,8 @@ def reporter(probe_trained, dataloader):
         probe.eval()
         sent_cnt = 0
         for i in feat_batch:
-            feat_sent = feat_batch[sent_cnt][:int(length_batch[sent_cnt].item())]
-            lab_sent = lab_batch[sent_cnt][:int(length_batch[sent_cnt].item())]
+            feat_sent = feat_batch[sent_cnt][:int(length_batch[sent_cnt].item())] # 只保留非0的部分
+            lab_sent = lab_batch[sent_cnt][:int(length_batch[sent_cnt].item())] # 只保留非0的部分
             pred_sent = probe(feat_sent)
             preds.append(pred_sent)
             labs.append(lab_sent)
@@ -41,8 +41,8 @@ def reporter(probe_trained, dataloader):
         file.write('\n')
         file.write(f'[PROBE ARCHIVE]')
         file.write(f'\n')
-        file.write(f'\n')
         file.write(f'{probe_filename}')
+        file.write('\n')
         file.write('\n')
         file.write(f'[TRAINING LOSSES]')
         file.write('\n')

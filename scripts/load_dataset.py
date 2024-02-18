@@ -7,8 +7,8 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import pickle
 
-model = BertModel.from_pretrained(BERT_LOCAL_PATH)
-tokenizer = BertTokenizer.from_pretrained(BERT_LOCAL_PATH)
+model = BertModel.from_pretrained(MODEL_PATH)
+tokenizer = BertTokenizer.from_pretrained(MODEL_PATH)
 
 def prep_dataset_onsite(conll_path):
 	tgi = trees_gi(conll_path)
@@ -51,11 +51,11 @@ def prep_dataset_onsite(conll_path):
 		tree_pairs = []
 		for node in tree.nodes:
 			if not node.isroot:
-				tree_pairs.append((node.token.lower(), tree.get_nodes_by_ids([node.headid])[0].token.lower(), node.id-1, node.headid-1, node.depd_abs, tree.len, densemats[tree_cnt][node.id-1], densemats[tree_cnt][node.headid-1]))
+				tree_pairs.append((node.token.lower(), tree.get_nodes_by_ids([node.headid])[0].token.lower(), node.id-1, node.headid-1, node.depd_abs, node.depd_directed, tree.len, densemats[tree_cnt][node.id-1], densemats[tree_cnt][node.headid-1]))
 		all_pairs.append(tree_pairs)
 		tree_cnt += 1
 
-	observation_class = namedtuple('observation', field_names = ['token', 'head', 'token_pos', 'head_pos', 'depd_abs', 'sent_len','token_emb', 'head_emb'])
+	observation_class = namedtuple('observation', field_names = ['token', 'head', 'token_pos', 'head_pos', 'depd_abs', 'depd_directed', 'sent_len','token_emb', 'head_emb'])
 
 	all_obs = [[observation_class(*node) for node in tree] for tree in all_pairs]
 
@@ -73,9 +73,14 @@ def prep_dataset_onsite(conll_path):
 		pickle.dump(feats_tensor,file)
 	print(f'[load_dataset] assembling observation objects for labs')
 	labs = [torch.zeros(max_sentlen) for sent in all_obs]
-	for idx_sent, sent in enumerate(all_obs):
-		for idx_token, token in enumerate(sent):
-			labs[idx_sent][idx_token] = token.depd_abs
+	if DEPD_ABS == True:
+		for idx_sent, sent in enumerate(all_obs):
+			for idx_token, token in enumerate(sent):
+				labs[idx_sent][idx_token] = token.depd_abs
+	else:
+		for idx_sent, sent in enumerate(all_obs):
+			for idx_token, token in enumerate(sent):
+				labs[idx_sent][idx_token] = token.depd_directed		
 	labs_tensor = torch.stack(labs,dim=0)
 	with open(DATASET_PKL_PATH.joinpath(f'labs_{conll_path.stem}_{MODEL_NAME}_layer_{HIDDEN_LAYER}.pkl'), mode='wb') as file:
 		pickle.dump(labs_tensor,file)
