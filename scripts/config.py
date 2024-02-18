@@ -2,8 +2,8 @@ from pathlib import Path
 BERT_LOCAL_PATH = Path(r'D:\transformers\bert\bert_base_uncased\mixed')
 MODEL_NAME = 'bert_base_uncased'
 NDIM_TOKEN_EMBEDDING = 768
-HIDDEN_LAYER = 3 # {1,2,...,12}
-ONSITE_EMBEDDINGS = True
+HIDDEN_LAYER = 12 # {1,2,...,12}
+ONSITE_EMBEDDINGS = False
 LEARNING_RATE = 0.001
 PROBE_RANK = 64
 BATCH_SIZE = 100

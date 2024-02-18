@@ -123,3 +123,16 @@ def prep_dataset_preload(conll_path):
 	dataloader = DataLoader(dataset,batch_size=BATCH_SIZE,shuffle=False)
 	print(f'[load_dataset] {conll_path.stem} dataloader instantiated: observations: {len(dataloader.dataset)}, batches: {len(dataloader)}')
 	return dataloader
+
+DEV_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-dev.conllu')
+TRAIN_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-train.conllu')
+TEST_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-test.conllu')
+
+if ONSITE_EMBEDDINGS == True:
+    dataloader_dev = prep_dataset_onsite(DEV_CONLL_PATH)
+    dataloader_train = prep_dataset_onsite(TRAIN_CONLL_PATH)
+    dataloader_test = prep_dataset_onsite(TEST_CONLL_PATH)
+else:
+    dataloader_dev = prep_dataset_preload(DEV_CONLL_PATH)
+    dataloader_train = prep_dataset_preload(TRAIN_CONLL_PATH)
+    dataloader_test = prep_dataset_preload(TEST_CONLL_PATH) 
