@@ -73,7 +73,7 @@ def prep_dataset_onsite(conll_path):
 		pickle.dump(feats_tensor,file)
 	print(f'[load_dataset] assembling observation objects for labs')
 	labs = [torch.zeros(max_sentlen) for sent in all_obs]
-	if DEPD_ABS == True:
+	if DEPD_DIRECTED == False:
 		for idx_sent, sent in enumerate(all_obs):
 			for idx_token, token in enumerate(sent):
 				labs[idx_sent][idx_token] = token.depd_abs

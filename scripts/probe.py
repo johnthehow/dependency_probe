@@ -72,7 +72,7 @@ def looper(epochs):
         dev_epoch_loss = dev(probe,dataloader_dev,loss_fn)
         epoch_losses[e] = [train_epoch_loss,dev_epoch_loss]
         print(f'[probe] train_loss: {train_epoch_loss}, dev_loss: {dev_epoch_loss}')
-    probe_filename = f'probe_{MODEL_NAME}_ndim_{NDIM_TOKEN_EMBEDDING}_rank_{PROBE_RANK}_{timestamp}.pth'
+    probe_filename = f'probe_{MODEL_NAME}_ndim_{NDIM_TOKEN_EMBEDDING}_rank_{PROBE_RANK}_directed_{str(DEPD_DIRECTED)}_{timestamp}.pth'
     torch.save(probe,PROBE_SAVEPATH.joinpath(probe_filename))
     print(f'[probe] probe saved at {PROBE_SAVEPATH} {probe_filename}')
     return probe,epoch_losses,probe_filename

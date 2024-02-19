@@ -24,7 +24,7 @@ def reporter(probe_trained, dataloader):
 
     dspr = spearmanr(preds, labs)
     dpsr = pearsonr(preds, labs)[0]
-    with open(REPORTS_PATH.joinpath(f'REPORT_{MODEL_NAME}_layer_{HIDDEN_LAYER}.txt'), mode='w') as file:
+    with open(REPORTS_PATH.joinpath(f'REPORT_{MODEL_NAME}_layer_{HIDDEN_LAYER}_directed_{str(DEPD_DIRECTED)}.txt'), mode='w') as file:
         file.write(f'[CORRELATION INDICES]')
         file.write('\n')
         file.write(f'Spearman\t{str(dspr.correlation)}')
