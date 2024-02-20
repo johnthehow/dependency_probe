@@ -3,4 +3,4 @@ scritps for experiment dependency_probe
 
 # Usage
 1. edit config.py
-2. run ui.py without arguments
+2. execute run.py without arguments
