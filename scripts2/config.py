@@ -1,11 +1,11 @@
 from pathlib import Path
-MODEL_PATH = Path(r'D:\transformers\bert\bert_base_uncased\mixed')
-# MODEL_PATH = Path(r'D:\transformers\bert\bert_large_uncased')
-MODEL_NAME = 'bert_base_uncased'
-# MODEL_NAME = 'bert_large_uncased'
-NDIM_TOKEN_EMBEDDING = 768
-# NDIM_TOKEN_EMBEDDING = 1024
-HIDDEN_LAYER = 9
+# MODEL_PATH = Path(r'D:\transformers\bert\bert_base_uncased\mixed')
+MODEL_PATH = Path(r'D:\transformers\bert\bert_large_uncased')
+# MODEL_NAME = 'bert_base_uncased'
+MODEL_NAME = 'bert_large_uncased'
+# NDIM_TOKEN_EMBEDDING = 768
+NDIM_TOKEN_EMBEDDING = 1024
+HIDDEN_LAYER = 0
 ONSITE_EMBEDDINGS = True
 LEARNING_RATE = 0.001
 PROBE_RANK = 64
