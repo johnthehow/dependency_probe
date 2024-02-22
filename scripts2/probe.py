@@ -1,5 +1,4 @@
 from config import *
-from report import reporter
 from torch import nn
 import torch
 from torch.optim import Adam
@@ -40,7 +39,7 @@ class loss(nn.Module):
             batch_loss = torch.sum(normalized_loss_per_sent) / total_sents # 一批中的总损失/总句子数
         else:
             batch_loss = torch.tensor(0.0)
-        return batch_loss, total_sents
+        return batch_loss
 
 def train(probe,dataloader,loss_fn,optimizer):
     total_batch_loss = 0
@@ -49,7 +48,7 @@ def train(probe,dataloader,loss_fn,optimizer):
         probe.train()
         optimizer.zero_grad()
         pred_batch = probe(feat_batch) # (batch_size, 最大句长)
-        batch_loss, count = loss_fn(pred_batch,lab_batch,length_batch)
+        batch_loss = loss_fn(pred_batch,lab_batch,length_batch)
         total_batch_loss += batch_loss.item()
         # print(f'[probe] current train batch loss {batch_loss.detach().numpy()}')
         batch_loss.backward()
@@ -63,27 +62,32 @@ def dev(probe,dataloader,loss_fn):
     for feat_batch,lab_batch,length_batch in dataloader:
         probe.eval()
         pred_batch = probe(feat_batch)
-        batch_loss = loss_fn(pred_batch, lab_batch, length_batch)[0]
+        batch_loss = loss_fn(pred_batch, lab_batch, length_batch)
         # print(f'[probe] current dev batch loss {batch_loss.detach().numpy()}')
         total_batch_loss += batch_loss.item()
         batch_cnt += 1
     return total_batch_loss/batch_cnt
 
 probe = TwoWordDepdProbe()
+if PROBE_CUDA == True:
+    probe.to('cuda')
+    dataloader_dev.to('cuda')
+    dataloader_dev.to('cuda')
+else:
+    pass
 loss_fn = loss()
 optimizer = Adam(probe.parameters(),lr=LEARNING_RATE)
 timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
 def looper(epochs):
     epoch_losses = defaultdict(list)
-    epoch_dev_losses = []
     for e in range(epochs):
         print(f'[probe] epoch {e}...')
         train_epoch_loss = train(probe,dataloader_train,loss_fn,optimizer)
         dev_epoch_loss = dev(probe,dataloader_dev,loss_fn)
         epoch_losses[e] = [train_epoch_loss,dev_epoch_loss]
         print(f'[probe] train_loss: {train_epoch_loss}, dev_loss: {dev_epoch_loss}')
-    probe_filename = f'probe_{MODEL_NAME}_ndim_{NDIM_TOKEN_EMBEDDING}_rank_{PROBE_RANK}_directed_{str(DEPD_DIRECTED)}_{timestamp}.pth'
+    probe_filename = f'probe_{MODEL_NAME}_ndim_{NDIM_TOKEN_EMBEDDING}_rank_{PROBE_RANK}_layer_{HIDDEN_LAYER}_directed_{str(DEPD_DIRECTED)}.pth'
     torch.save(probe,PROBE_SAVEPATH.joinpath(probe_filename))
     print(f'[probe] probe saved at {PROBE_SAVEPATH} {probe_filename}')
     return probe,epoch_losses,probe_filename

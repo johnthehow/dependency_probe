@@ -1,0 +1,55 @@
+[CORRELATION INDICES]
+Spearman	0.7654828675068811
+Pearson	0.6810865406745555
+
+[UUAS]
+UUAS	0.45240439227565316
+
+[PROBE SETTINGS]
+ROOT_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe
+MODEL_NAME	bert_large_uncased
+MODEL_PATH	D:\transformers\bert\bert_large_uncased
+MODEL_NLAYER	24
+NDIM_TOKEN_EMBEDDING	1024
+MODEL_CUDA	False
+ONSITE_EMBEDDINGS	False
+ONSITE_PROBES	True
+LEARNING_RATE	0.001
+PROBE_RANK	64
+PROBE_CUDA	False
+BATCH_SIZE	100
+PROBE_SAVEPATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\probes
+EPOCHS	20
+CONLL_ALIAS	gum
+CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum
+TRAIN_CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum\en_gum-ud-train.conllu
+DEV_CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum\en_gum-ud-dev.conllu
+TEST_CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum\en_gum-ud-test.conllu
+DEPD_DIRECTED	False
+DATASET_PKL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\pkl
+REPORTS_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\reports
+
+[PROBE ARCHIVE]
+probe_bert_large_uncased_ndim_1024_rank_64_layer_21_directed_False.pth
+
+[TRAINING LOSSES]
+0	[8.184793692368727, 6.5932537615299225]
+1	[5.510539178664867, 5.416756719350815]
+2	[4.731031683775095, 5.0650874376297]
+3	[4.4544223455282355, 4.913538783788681]
+4	[4.315116733312607, 4.836542367935181]
+5	[4.2311861010698175, 4.797284811735153]
+6	[4.173402676215539, 4.753848433494568]
+7	[4.131914186936158, 4.744195878505707]
+8	[4.1071722484551945, 4.7329550087451935]
+9	[4.083797326454749, 4.723245352506638]
+10	[4.070351460805306, 4.718632876873016]
+11	[4.052907398113837, 4.7229680716991425]
+12	[4.050176106966459, 4.717443436384201]
+13	[4.039425714657857, 4.717803180217743]
+14	[4.044605021293346, 4.722642749547958]
+15	[4.034166689102467, 4.7088455855846405]
+16	[4.039083771980726, 4.72476327419281]
+17	[4.030627289643655, 4.712317854166031]
+18	[4.032589401190098, 4.724808305501938]
+19	[4.024268326851038, 4.720179527997971]

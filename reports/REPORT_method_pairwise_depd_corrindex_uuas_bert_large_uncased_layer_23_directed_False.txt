@@ -1,0 +1,55 @@
+[CORRELATION INDICES]
+Spearman	0.7204778239618533
+Pearson	0.6395114139078129
+
+[UUAS]
+UUAS	0.41446421809920486
+
+[PROBE SETTINGS]
+ROOT_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe
+MODEL_NAME	bert_large_uncased
+MODEL_PATH	D:\transformers\bert\bert_large_uncased
+MODEL_NLAYER	24
+NDIM_TOKEN_EMBEDDING	1024
+MODEL_CUDA	False
+ONSITE_EMBEDDINGS	False
+ONSITE_PROBES	True
+LEARNING_RATE	0.001
+PROBE_RANK	64
+PROBE_CUDA	False
+BATCH_SIZE	100
+PROBE_SAVEPATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\probes
+EPOCHS	20
+CONLL_ALIAS	gum
+CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum
+TRAIN_CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum\en_gum-ud-train.conllu
+DEV_CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum\en_gum-ud-dev.conllu
+TEST_CONLL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum\en_gum-ud-test.conllu
+DEPD_DIRECTED	False
+DATASET_PKL_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\pkl
+REPORTS_PATH	C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\reports
+
+[PROBE ARCHIVE]
+probe_bert_large_uncased_ndim_1024_rank_64_layer_23_directed_False.pth
+
+[TRAINING LOSSES]
+0	[7.704578252939077, 6.759081065654755]
+1	[5.87881155197437, 5.852979600429535]
+2	[5.106837570667267, 5.447472006082535]
+3	[4.791875694806759, 5.270917356014252]
+4	[4.633055171141257, 5.185222923755646]
+5	[4.540545757000263, 5.136818826198578]
+6	[4.4761327894834375, 5.103860944509506]
+7	[4.435868144035339, 5.075506418943405]
+8	[4.392253245298679, 5.0678030252456665]
+9	[4.366738876471152, 5.058470517396927]
+10	[4.349082385118191, 5.045184791088104]
+11	[4.341379747940944, 5.042123585939407]
+12	[4.324407270321479, 5.039688795804977]
+13	[4.314311371399806, 5.042351871728897]
+14	[4.300995634152339, 5.033840715885162]
+15	[4.295475886418269, 5.043199449777603]
+16	[4.2938744356999035, 5.035145044326782]
+17	[4.293267896542182, 5.042774319648743]
+18	[4.29274255495805, 5.040773004293442]
+19	[4.296464647238071, 5.048406541347504]

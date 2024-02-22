@@ -1,25 +1,41 @@
 from pathlib import Path
-# MODEL_PATH = Path(r'D:\transformers\bert\bert_base_uncased\mixed')
-MODEL_PATH = Path(r'D:\transformers\bert\bert_large_uncased')
+
+# [GENERAL SETTINGS]
+ROOT_PATH = Path(r'C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe')
+
+# [MODEL SETTINGS]
 # MODEL_NAME = 'bert_base_uncased'
 MODEL_NAME = 'bert_large_uncased'
-# NDIM_TOKEN_EMBEDDING = 768
-NDIM_TOKEN_EMBEDDING = 1024
-HIDDEN_LAYER = 24
-ONSITE_EMBEDDINGS = True
+if MODEL_NAME == 'bert_large_uncased':
+    MODEL_PATH = Path(r'D:\transformers\bert\bert_large_uncased')
+    MODEL_NLAYER = 24
+    NDIM_TOKEN_EMBEDDING = 1024
+elif MODEL_NAME == 'bert_base_uncased':
+    MODEL_PATH = Path(r'D:\transformers\bert\bert_base_uncased\mixed')
+    NDIM_TOKEN_EMBEDDING = 768
+    MODEL_NLAYER = 12
+MODEL_CUDA = False
+ONSITE_EMBEDDINGS = False
+
+# [PROBE SETTINGS]
+HIDDEN_LAYER = 4
+ONSITE_PROBES = True
 LEARNING_RATE = 0.001
 PROBE_RANK = 64
+PROBE_CUDA = False
 BATCH_SIZE = 100
-DEPD_DIRECTED = False
-CONLL_PATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\gum")
-# CONLL_PATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\conll\ewt")
-TRAIN_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-train.conllu')
-DEV_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-dev.conllu')
-TEST_CONLL_PATH = CONLL_PATH.joinpath('en_gum-ud-test.conllu')
-# TRAIN_CONLL_PATH = CONLL_PATH.joinpath('en_ewt-ud-train.conllu')
-# DEV_CONLL_PATH = CONLL_PATH.joinpath('en_ewt-ud-dev.conllu')
-# TEST_CONLL_PATH = CONLL_PATH.joinpath('en_ewt-ud-test.conllu')
-DATASET_PKL_PATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\datasets\pkl")
-PROBE_SAVEPATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\models")
+PROBE_SAVEPATH = ROOT_PATH.joinpath("probes")
 EPOCHS = 20
-REPORTS_PATH = Path(r"C:\Program Files\Python37\Lib\site-packages\thehow\dependency_probe\reports")
+
+# [DATA SETTINGS]
+# CONLL_ALiAS = 'ewt'
+CONLL_ALIAS = 'gum'
+CONLL_PATH = ROOT_PATH.joinpath(f"datasets\conll\{CONLL_ALIAS}")
+TRAIN_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-train.conllu')
+DEV_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-dev.conllu')
+TEST_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-test.conllu')
+DEPD_DIRECTED = False
+DATASET_PKL_PATH = ROOT_PATH.joinpath("datasets\pkl")
+
+# [REPORT SETTINGS]
+REPORTS_PATH = ROOT_PATH.joinpath("reports")
