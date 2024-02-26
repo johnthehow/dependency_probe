@@ -55,17 +55,21 @@ def report_writer(probe_trained, dataset):
     mean_spearman_for_sents_len_5_50 = spearmanr_res[1]
     uuas_res = report_uuas(probe_trained, dataset)
     report_filepath = REPORTS_PATH.joinpath(f'REPORT[COR]SPEARMANR[ACC]UUAS[MODEL]{MODEL_NAME}[LAYER]{HIDDEN_LAYER}[EPOCHS]{EPOCHS}[BATCHSIZE]{BATCH_SIZE}[LR]{LEARNING_RATE}[LOSSPOW]{PROBE_LOSS_POW}[METHOD]{METHOD}{CONLL_ALIAS}[DIRECTED]{str(DEPD_DIRECTED).lower()}.txt')
+    epoch_losses = probe_trained[1]
     with open(report_filepath, 'w') as fout:
-         fout.write(f'[SPEARMANR]\n')
-         fout.write(f'sent_len\tmean_spearmanr\n')
-         for length in sorted(mean_spearman_for_each_length):
-             fout.write(str(length) + '\t' + str(mean_spearman_for_each_length[length]) + '\n')
-         fout.write(f'mean spearmanr for sents of len 5-50\n')
-         fout.write(f'{str(mean_spearman_for_sents_len_5_50)}\n')
-         fout.write(f'\n[UUAS]\n')
-         fout.write(f'{uuas_res}\n')
-         fout.write(f'\n[SETTINGS]\n')
-         for k,v in (config.__dict__).items():
+        fout.write(f'[Mean spearmanr for sents of len 5-50]\n')
+        fout.write(f'{str(mean_spearman_for_sents_len_5_50)}\n')
+        fout.write(f'\n[UUAS]\n')
+        fout.write(f'{uuas_res}\n')
+        fout.write(f'\n[SPEARMANR]\n')
+        fout.write(f'sent_len\tmean_spearmanr\n')
+        for length in sorted(mean_spearman_for_each_length):
+            fout.write(str(length) + '\t' + str(mean_spearman_for_each_length[length]) + '\n')
+        fout.write(f'\n[EPOCH LOSSES]\n')
+        for i in epoch_losses:
+           fout.write(f'{i}\n')
+        fout.write(f'\n[SETTINGS]\n')
+        for k,v in (config.__dict__).items():
              if k.isupper() == True:
                  fout.write(f'{k}\t{str(v)}\n')
     print(f'[REPORT] report saved at {report_filepath}')
