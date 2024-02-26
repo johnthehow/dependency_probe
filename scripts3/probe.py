@@ -3,7 +3,7 @@ from torch import nn
 import torch
 from torch.optim import Adam
 import datetime
-from load_dataset import dataloader_train, dataloader_dev
+from dataset import dataloaders_triad
 from collections import defaultdict
 
 
@@ -19,7 +19,7 @@ class TwoWordDepdProbe(nn.Module):
         transformed = transformed.expand(-1, -1, transformed.shape[1], -1)
         transposed = transformed.transpose(1,2) # 等价于 transformed.unsqueeze(1).expand(-1,句长,-1,-1)
         diffs = transformed - transposed #
-        squared_diffs = diffs.pow(2)
+        squared_diffs = diffs.pow(PROBE_LOSS_POW)
         squared_distances = torch.sum(squared_diffs, -1)
         return squared_distances
 
@@ -44,7 +44,7 @@ class loss(nn.Module):
 def train(probe,dataloader,loss_fn,optimizer):
     total_batch_loss = 0
     batch_cnt = 0
-    for feat_batch,lab_batch,length_batch in dataloader:
+    for feat_batch,lab_batch,length_batch,obs_batch in dataloader:
         probe.train()
         optimizer.zero_grad()
         pred_batch = probe(feat_batch) # (batch_size, 最大句长)
@@ -59,7 +59,7 @@ def train(probe,dataloader,loss_fn,optimizer):
 def dev(probe,dataloader,loss_fn):
     total_batch_loss = 0
     batch_cnt = 0
-    for feat_batch,lab_batch,length_batch in dataloader:
+    for feat_batch,lab_batch,length_batch,obs_batch in dataloader:
         probe.eval()
         pred_batch = probe(feat_batch)
         batch_loss = loss_fn(pred_batch, lab_batch, length_batch)
@@ -69,26 +69,22 @@ def dev(probe,dataloader,loss_fn):
     return total_batch_loss/batch_cnt
 
 probe = TwoWordDepdProbe()
-if PROBE_CUDA == True:
-    probe.to('cuda')
-    dataloader_dev.to('cuda')
-    dataloader_dev.to('cuda')
-else:
-    pass
 loss_fn = loss()
 optimizer = Adam(probe.parameters(),lr=LEARNING_RATE)
 timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
+dataloader_train, dataloader_dev, dataloader_test = dataloaders_triad
+
 def looper(epochs):
     epoch_losses = defaultdict(list)
     for e in range(epochs):
-        print(f'[probe] epoch {e}...')
+        print(f'[PROBE] epoch {e}...')
         train_epoch_loss = train(probe,dataloader_train,loss_fn,optimizer)
         dev_epoch_loss = dev(probe,dataloader_dev,loss_fn)
         epoch_losses[e] = [train_epoch_loss,dev_epoch_loss]
-        print(f'[probe] train_loss: {train_epoch_loss}, dev_loss: {dev_epoch_loss}')
-    probe_filename = f'probe_{MODEL_NAME}_ndim_{NDIM_TOKEN_EMBEDDING}_rank_{PROBE_RANK}_layer_{HIDDEN_LAYER}_directed_{str(DEPD_DIRECTED)}.pth'
+        print(f'[PROBE] train_loss: {train_epoch_loss}, dev_loss: {dev_epoch_loss}')
+    probe_filename = f'PROBE[MODEL]{MODEL_NAME}[LAYER]{HIDDEN_LAYER}[DATA]{TRAIN_CONLL_PATH.stem}[RANK]{PROBE_RANK}[EPOCHS]{EPOCHS}[BATCHSIZE]{BATCH_SIZE}[LR]{LEARNING_RATE}[LOSSPOW]{PROBE_LOSS_POW}.pth'
     torch.save(probe,PROBE_SAVEPATH.joinpath(probe_filename))
-    print(f'[probe] probe saved at {PROBE_SAVEPATH} {probe_filename}')
+    print(f'[PROBE] probe saved at {PROBE_SAVEPATH} {probe_filename}')
     return probe,epoch_losses,probe_filename
 

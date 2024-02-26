@@ -15,21 +15,23 @@ elif MODEL_NAME == 'bert_base_uncased':
     NDIM_TOKEN_EMBEDDING = 768
     MODEL_NLAYER = 12
 MODEL_CUDA = False
-ONSITE_EMBEDDINGS = True
+ONSITE_EMBEDDINGS = False
 
 # [PROBE SETTINGS]
-HIDDEN_LAYER = 4
+HIDDEN_LAYER = 0
 ONSITE_PROBES = True
 LEARNING_RATE = 0.001
 PROBE_RANK = 64
-PROBE_CUDA = True
-BATCH_SIZE = 10
+PROBE_CUDA = False
+BATCH_SIZE = 100
 PROBE_SAVEPATH = ROOT_PATH.joinpath("probes")
 EPOCHS = 20
+PROBE_LOSS_POW = 2
 
 # [DATA SETTINGS]
-CONLL_ALIAS = 'ewt'
+# CONLL_ALIAS = 'ewt'
 # CONLL_ALIAS = 'gum'
+CONLL_ALIAS = 'wsj'
 CONLL_PATH = ROOT_PATH.joinpath(f"datasets\conll\{CONLL_ALIAS}")
 TRAIN_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-train.conllu')
 DEV_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-dev.conllu')
@@ -39,3 +41,7 @@ DATASET_PKL_PATH = ROOT_PATH.joinpath("datasets\pkl")
 
 # [REPORT SETTINGS]
 REPORTS_PATH = ROOT_PATH.joinpath("reports")
+
+# [METHOD]
+METHOD = 'pairwisedepd'
+# METHOD = 'deprelonly'

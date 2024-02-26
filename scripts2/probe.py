@@ -69,12 +69,6 @@ def dev(probe,dataloader,loss_fn):
     return total_batch_loss/batch_cnt
 
 probe = TwoWordDepdProbe()
-if PROBE_CUDA == True:
-    probe.to('cuda')
-    dataloader_dev.to('cuda')
-    dataloader_dev.to('cuda')
-else:
-    pass
 loss_fn = loss()
 optimizer = Adam(probe.parameters(),lr=LEARNING_RATE)
 timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
