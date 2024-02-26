@@ -107,7 +107,7 @@ def save_embeddings():
 		print('[DATASET] embeddings of all layers pickled')
 
 def load_treeobjs():
-	print(f'[DATASET] loading treeobjs')
+	print(f'[DATASET] loading treeobjs for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
 	treeobjs = []
 	for conll_path in [TRAIN_CONLL_PATH, DEV_CONLL_PATH, TEST_CONLL_PATH]:
 		filename =  DATASET_PKL_PATH.joinpath('treeobjs').joinpath(f'MAPPABLE_TREEOBJS[DATA]{conll_path.stem}[MODEL]{MODEL_NAME}.pkl')
@@ -116,7 +116,7 @@ def load_treeobjs():
 	return treeobjs
 
 def load_depdmats():
-	print(f'[DATASET] loading depdmats')
+	print(f'[DATASET] loading depdmats for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
 	depdmats = []
 	for conll_path in [TRAIN_CONLL_PATH, DEV_CONLL_PATH, TEST_CONLL_PATH]:
 		filename =  DATASET_PKL_PATH.joinpath('depdmats').joinpath(f'DEPDMATS[DATA]{conll_path.stem}[MODEL]{MODEL_NAME}.pkl')
@@ -125,7 +125,7 @@ def load_depdmats():
 	return depdmats
 
 def load_lengths():
-	print(f'[DATASET] loading lengths')
+	print(f'[DATASET] loading lengths for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
 	lengths = []
 	for conll_path in [TRAIN_CONLL_PATH, DEV_CONLL_PATH, TEST_CONLL_PATH]:
 		filename =  DATASET_PKL_PATH.joinpath('lengths').joinpath(f'LENGTHS[DATA]{conll_path.stem}[MODEL]{MODEL_NAME}.pkl')
@@ -134,7 +134,7 @@ def load_lengths():
 	return lengths
 
 def load_embeddings():
-	print(f'[DATASET] loading embeddings')
+	print(f'[DATASET] loading embeddings for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
 	embeddings = []
 	for conll_path in [TRAIN_CONLL_PATH, DEV_CONLL_PATH, TEST_CONLL_PATH]:
 		filename =  DATASET_PKL_PATH.joinpath('embeddings').joinpath(f'EMBEDDINGS[MODEL]{MODEL_NAME}[DATA]{conll_path.stem}[LAYER]{HIDDEN_LAYER}.pkl')
@@ -176,7 +176,7 @@ def assemble_datasets():
 	depdmats_triad = load_depdmats()
 	embeddings_triad = load_embeddings()
 	dataloaders_triad = []
-	print(f'[DATASET] assembling observations...')
+	print(f'[DATASET] assembling observations for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
 	for treeobjs, depdmats, embeddings in zip(treeobjs_triad, depdmats_triad, embeddings_triad):
 		observations = []
 		for idx, tree in enumerate(treeobjs):
