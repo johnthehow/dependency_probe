@@ -1,4 +1,0 @@
-[DATASET] loading treeobjs for en_wsj-ud-train, en_wsj-ud-dev and en_wsj-ud-test
-[DATASET] loading depdmats for en_wsj-ud-train, en_wsj-ud-dev and en_wsj-ud-test
-[DATASET] loading embeddings for en_wsj-ud-train, en_wsj-ud-dev and en_wsj-ud-test
-experimenting with layer 0

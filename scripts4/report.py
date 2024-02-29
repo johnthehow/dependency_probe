@@ -54,7 +54,7 @@ def report_writer(probe_trained, dataset):
     mean_spearman_for_each_length = spearmanr_res[0]
     mean_spearman_for_sents_len_5_50 = spearmanr_res[1]
     uuas_res = report_uuas(probe_trained, dataset)
-    report_filepath = REPORTS_PATH.joinpath(f'REPORT[COR]SPEARMANR[ACC]UUAS[MODEL]{MODEL_NAME}[LAYER]{HIDDEN_LAYER}[EPOCHS]{EPOCHS}[BATCHSIZE]{BATCH_SIZE}[LR]{LEARNING_RATE}[LOSSPOW]{PROBE_LOSS_POW}[METHOD]{METHOD}{CONLL_ALIAS}[DIRECTED]{str(DEPD_DIRECTED).lower()}.txt')
+    report_filepath = REPORTS_PATH.joinpath(f'REPORT[COR]SPEARMANR[ACC]UUAS[MODEL]{MODEL_NAME}[LAYER]{HIDDEN_LAYER}[EPOCHS]{EPOCHS}[BATCHSIZE]{BATCH_SIZE}[RANK]{PROBE_RANK}[LR]{LEARNING_RATE}[LOSSPOW]{PROBE_LOSS_POW}[METHOD]{METHOD}{CONLL_ALIAS}[DIRECTED]{str(DEPD_DIRECTED).lower()}.txt')
     epoch_losses = probe_trained[1]
     with open(report_filepath, 'w') as fout:
         fout.write(f'[Mean spearmanr for sents of len 5-50]\n')
