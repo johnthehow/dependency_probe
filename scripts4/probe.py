@@ -83,7 +83,7 @@ def looper(epochs):
         dev_epoch_loss = dev(probe,dataloader_dev,loss_fn)
         epoch_losses[e] = [train_epoch_loss,dev_epoch_loss]
         print(f'[PROBE] train_loss: {train_epoch_loss}, dev_loss: {dev_epoch_loss}')
-    probe_filename = f'PROBE[MODEL]{MODEL_NAME}[LAYER]{HIDDEN_LAYER}[DATA]{TRAIN_CONLL_PATH.stem}[RANK]{PROBE_RANK}[EPOCHS]{EPOCHS}[BATCHSIZE]{BATCH_SIZE}[LR]{LEARNING_RATE}[LOSSPOW]{PROBE_LOSS_POW}.pth'
+    probe_filename = f'PROBE[MODEL]{MODEL_NAME}[LAYER]{HIDDEN_LAYER}[DATA]{TRAIN_CONLL_PATH.stem}[RANK]{PROBE_RANK}[EPOCHS]{EPOCHS}[BATCHSIZE]{BATCH_SIZE}[LR]{LEARNING_RATE}[LOSSPOW]{PROBE_LOSS_POW}[PATHD]{str(PATH_DISTANCE).lower()}[DIRECTED]{str(DEPD_DIRECTED).lower()}.pth'
     torch.save(probe,PROBE_SAVEPATH.joinpath(probe_filename))
     print(f'[PROBE] probe saved at {PROBE_SAVEPATH} {probe_filename}')
     return probe,epoch_losses,probe_filename

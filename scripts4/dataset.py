@@ -67,6 +67,25 @@ def save_depdmats():
 		print(f'[DATASET] depd mats pickled at {save_path}')
 	return
 
+def save_psdmats():
+	for conll_path in [TRAIN_CONLL_PATH, DEV_CONLL_PATH, TEST_CONLL_PATH]:
+		treeobjs_path = DATASET_PKL_PATH.joinpath('treeobjs').joinpath(f'MAPPABLE_TREEOBJS[DATA]{conll_path.stem}[MODEL]{MODEL_NAME}.pkl')
+		with open(treeobjs_path, mode='rb') as file:
+			treeobjs = pickle.load(file)
+		depd_mats = []
+		tree_cnt = 0
+		print(f'[DATASET] generating psd mats for mappable trees...')
+		for tree in treeobjs:
+			print(f'prcessing {tree_cnt}-th tree', end='\x1b\r')
+			depd_mats.append(torch.tensor(tree.ajacency_matrix_weighted_absolute_full))
+			tree_cnt += 1
+		save_path = DATASET_PKL_PATH.joinpath('psdmats').joinpath(f'PSDMATS[DATA]{conll_path.stem}[MODEL]{MODEL_NAME}.pkl')
+		print(f'[DATSSET] pickling psd mats...')
+		with open(save_path, mode='wb') as file:
+			pickle.dump(depd_mats, file)
+		print(f'[DATASET] psd mats pickled at {save_path}')
+	return
+	
 def save_lengths():
 	for conll_path in [TRAIN_CONLL_PATH, DEV_CONLL_PATH, TEST_CONLL_PATH]:
 		treeobjs_path = DATASET_PKL_PATH.joinpath('treeobjs').joinpath(f'MAPPABLE_TREEOBJS[DATA]{conll_path.stem}[MODEL]{MODEL_NAME}.pkl')
@@ -172,6 +191,15 @@ def load_depdmats():
 			depdmats.append(pickle.load(file))
 	return depdmats
 
+def load_psdmats():
+	print(f'[DATASET] loading psdmats for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
+	psdmats = []
+	for conll_path in [TRAIN_CONLL_PATH, DEV_CONLL_PATH, TEST_CONLL_PATH]:
+		filename =  DATASET_PKL_PATH.joinpath('psdmats').joinpath(f'PSDMATS[DATA]{conll_path.stem}[MODEL]{MODEL_NAME}.pkl')
+		with open(filename, mode='rb') as file:
+			psdmats.append(pickle.load(file))
+	return psdmats
+
 def load_lengths():
 	print(f'[DATASET] loading lengths for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
 	lengths = []
@@ -221,11 +249,14 @@ def assemble_datasets():
 	observation_class = namedtuple('Observation', ['index', 'sentence', 'lemma_sentence', 'upos_sentence', 'xpos_sentence', 'morph', 'head_indices', 'governance_relations', 'secondary_relations', 'extra_info', 'embeddings'])
 
 	treeobjs_triad = load_treeobjs()
-	depdmats_triad = load_depdmats()
+	if PATH_DISTANCE == False:
+		labmats_triad = load_depdmats()
+	else:
+		labmats_triad = load_psdmats()
 	embeddings_triad = load_embeddings()
 	dataloaders_triad = []
 	print(f'[DATASET] assembling observations for {TRAIN_CONLL_PATH.stem}, {DEV_CONLL_PATH.stem} and {TEST_CONLL_PATH.stem}')
-	for treeobjs, depdmats, embeddings in zip(treeobjs_triad, depdmats_triad, embeddings_triad):
+	for treeobjs, depdmats, embeddings in zip(treeobjs_triad, labmats_triad, embeddings_triad):
 		observations = []
 		for idx, tree in enumerate(treeobjs):
 			obs_nodes = tree.nodes
@@ -255,4 +286,5 @@ if __name__ == '__main__':
 	# save_treeobjs()
 	# save_depdmats()
 	# save_lengths()
-	save_embeddings()
+	# save_embeddings()
+	save_psdmats()

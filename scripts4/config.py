@@ -30,13 +30,14 @@ PROBE_LOSS_POW = 2
 
 # [DATA SETTINGS]
 # CONLL_ALIAS = 'ewt'
-CONLL_ALIAS = 'gum'
-# CONLL_ALIAS = 'wsj'
+# CONLL_ALIAS = 'gum'
+CONLL_ALIAS = 'wsj'
 CONLL_PATH = ROOT_PATH.joinpath(f"datasets\conll\{CONLL_ALIAS}")
 TRAIN_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-train.conllu')
 DEV_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-dev.conllu')
 TEST_CONLL_PATH = CONLL_PATH.joinpath(f'en_{CONLL_ALIAS}-ud-test.conllu')
 DEPD_DIRECTED = False
+PATH_DISTANCE = True
 DATASET_PKL_PATH = ROOT_PATH.joinpath("datasets\pkl")
 
 # [REPORT SETTINGS]
